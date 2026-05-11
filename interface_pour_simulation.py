@@ -4,8 +4,6 @@ import numpy as np
 import json
 from simulation import Simulation
 
-with open('donnees.json', 'r', encoding='utf-8') as fichier:
-    donnees = json.load(fichier)
 
 class Interface_Billard():
     def __init__(self):
@@ -17,6 +15,8 @@ class Interface_Billard():
             self.H = donnees["hauteur"]
             self.r = donnees["Rayon des balles"]
             self.largeur_bande = donnees["largeur_bande"]
+            self.friction = donnees["coefficient de friction"]
+            self.epsilon = donnees["epsilon"]
             self.p_i = np.array([(self.L - self.r*2)/4, self.H/2], dtype=float)
 
         
@@ -55,11 +55,9 @@ class Interface_Billard():
 
 
     def lancer(self):
-        #self.bande = self.table_billard.create_rectangle(self.r, self.r, self.L - self.r, self.H - self.r, outline="black", width=1)
-        #self.balle = self.table_billard.create_oval(self.p_i[0] - self.r, self.p_i[1] - self.r, self.p_i[0] + self.r, self.p_i[1] + self.r, fill="white")
         try:
             vitesse = float(self.v_i.get())
-            angle = float(self.angle.get())
+            angle = -(float(self.angle.get()))
         except ValueError:
             return
 

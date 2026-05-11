@@ -1,24 +1,18 @@
 import numpy as np
 import json
+from interface_pour_simulation import Interface_Billard
 
 with open('donnees.json', 'r', encoding='utf-8') as fichier:
     donnees = json.load(fichier)
 
-class Simulation:
-    def __init__(self, vitesse_initiale, position, angle, r, L, H, table_billard, balle, fenetre):
+class Simulation(Interface_Billard):
+    def __init__(self, vitesse_initiale, position, angle, r, L, H, table_billard, balle, fenetre, friction, epsilon):
+        super().__init__(r, L, H, table_billard, balle, fenetre, friction, epsilon)
         self.vitesse = np.array(vitesse_initiale, dtype=float)
         self.position = np.array(position, dtype=float)
         self.angle = angle
-        self.r = r
-        self.L = L
-        self.H = H
-        self.table_billard = table_billard
-        self.balle = balle
-        self.fenetre = fenetre
         self.etat = None
         self.bouton = None
-        self.friction = donnees["coefficient de friction"]
-        self.epsilon = donnees["epsilon"]
 
     def calculer_trajectoire(self):
         dt = 1
