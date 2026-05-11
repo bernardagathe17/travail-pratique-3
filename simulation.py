@@ -1,4 +1,8 @@
 import numpy as np
+import json
+
+with open('donnees.json', 'r', encoding='utf-8') as fichier:
+    donnees = json.load(fichier)
 
 class Simulation:
     def __init__(self, vitesse_initiale, position, angle, r, L, H, table_billard, balle, fenetre):
@@ -13,8 +17,8 @@ class Simulation:
         self.fenetre = fenetre
         self.etat = None
         self.bouton = None
-        self.friction = 0.99
-        self.epsilon = 0.1
+        self.friction = donnees["coefficient de friction"]
+        self.epsilon = donnees["epsilon"]
 
     def calculer_trajectoire(self):
         dt = 1
@@ -40,7 +44,7 @@ class Simulation:
         )
 
         if np.linalg.norm(self.vitesse) > self.epsilon:
-            self.etat = self.fenetre.after(100, self.deplacement)
+            self.etat = self.fenetre.after(20, self.deplacement)
         else:
             self.etat = None
 

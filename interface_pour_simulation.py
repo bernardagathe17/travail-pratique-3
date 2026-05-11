@@ -1,13 +1,27 @@
 import tkinter as tk
+from tkinter import filedialog
 import numpy as np
+import json
 from simulation import Simulation
 
-class Interface_Billard:
+with open('donnees.json', 'r', encoding='utf-8') as fichier:
+    donnees = json.load(fichier)
+
+class Interface_Billard():
     def __init__(self):
-        self.L = 600
-        self.H = 300
-        self.r = 10
-        self.p_i = np.array([(self.L - self.r*2)/4, self.H/2], dtype=float)
+        self.fichier = tk.filedialog.askopenfilename(title="Sélectionner un fichier de configuration", filetypes=[("JSON files", "*.json")])
+
+        with open(self.fichier, 'r', encoding='utf-8') as fichier:
+            donnees = json.load(fichier)
+            self.L = donnees["largeur"]
+            self.H = donnees["hauteur"]
+            self.r = donnees["Rayon des balles"]
+            self.largeur_bande = donnees["largeur_bande"]
+            self.p_i = np.array([(self.L - self.r*2)/4, self.H/2], dtype=float)
+
+        
+        
+
         self.simulation = None
 
         self.fenetre = tk.Tk()
@@ -38,7 +52,11 @@ class Interface_Billard:
         self.bouton_position_finale = tk.Button(self.fenetre, text="Position finale", state='disabled', command=self.afficher_position_finale)
         self.bouton_position_finale.grid(row=6, column=0)
 
+
+
     def lancer(self):
+        #self.bande = self.table_billard.create_rectangle(self.r, self.r, self.L - self.r, self.H - self.r, outline="black", width=1)
+        #self.balle = self.table_billard.create_oval(self.p_i[0] - self.r, self.p_i[1] - self.r, self.p_i[0] + self.r, self.p_i[1] + self.r, fill="white")
         try:
             vitesse = float(self.v_i.get())
             angle = float(self.angle.get())
@@ -86,7 +104,9 @@ class Interface_Billard:
     def run(self):
         self.fenetre.mainloop()
 
+
 if __name__ == '__main__':
     app = Interface_Billard()
     app.run()
+
 
