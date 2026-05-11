@@ -1,6 +1,8 @@
 import tkinter as tk
 import numpy as np
-
+import json
+with open('donnees.json', 'r', encoding='utf-8') as fichier:
+    donnees = json.load(fichier)
 
 
 x_vel = 5
@@ -29,10 +31,10 @@ def bouger_balle(x, y ,x_vel, y_vel):
 
 
 
-largeur = 600
-hauteur = 300
-rayon = 10
-largeur_bande = 20
+largeur = donnees["largeur"]
+hauteur = donnees["hauteur"]
+rayon = donnees["Rayon des balles"]
+largeur_bande = donnees["largeur_bande"]
 position_initiale_balle = np.array([(largeur - largeur_bande*2)/4, hauteur/2])
 x,y = position_initiale_balle
 
