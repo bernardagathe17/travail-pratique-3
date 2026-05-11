@@ -47,7 +47,7 @@ class Ball:
         self.canvas.coords(
             self.id,
             self.x - BALL_RADIUS,
-            self.y - BALL_RADIUS,
+            self.y - BALL_RADIUS, #redessine la balle à sa nouvelle position
             self.x + BALL_RADIUS,
             self.y + BALL_RADIUS
         )
