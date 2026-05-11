@@ -1,12 +1,16 @@
 import tkinter as tk
 import numpy as np
+import json
 from simulation import Simulation
+
+with open('donnees.json', 'r', encoding='utf-8') as fichier:
+    donnees = json.load(fichier)
 
 class Interface_Billard:
     def __init__(self):
-        self.L = 600
-        self.H = 300
-        self.r = 10
+        self.L = donnees["largeur"]
+        self.H = donnees["hauteur"]
+        self.r = donnees["Rayon des balles"]
         self.p_i = np.array([(self.L - self.r*2)/4, self.H/2], dtype=float)
         self.simulation = None
 
