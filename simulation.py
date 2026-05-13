@@ -1,31 +1,35 @@
 import numpy as np
-import json
 
-with open('donnees.json', 'r', encoding='utf-8') as fichier:
-    donnees = json.load(fichier)
 
-class Simulation:
-    def __init__(self, vitesse_initiale, position, angle, r, L, H, table_billard, balle, fenetre):
+class Simulation():
+    def __init__(self, vitesse_initiale, position, angle, r, L, H, table_billard, balle, fenetre, largeur_bande, config=None):
         self.vitesse = np.array(vitesse_initiale, dtype=float)
         self.position = np.array(position, dtype=float)
         self.angle = angle
         self.r = r
         self.L = L
         self.H = H
+        self.largeur_bande = largeur_bande
         self.table_billard = table_billard
         self.balle = balle
         self.fenetre = fenetre
         self.etat = None
         self.bouton = None
-        self.friction = donnees["coefficient de friction"]
-        self.epsilon = donnees["epsilon"]
+        self.config = config or {}
+        self.friction = self.config.get("coefficient de friction", 0.95)
+        self.epsilon = self.config.get("epsilon", 0.1)
 
     def calculer_trajectoire(self):
         dt = 1
 
-        if self.position[0] <= 2 * self.r or self.position[0] >= self.L - 3 * self.r:
+        min_x = self.largeur_bande + self.r
+        max_x = self.L - self.largeur_bande - self.r
+        min_y = self.largeur_bande + self.r
+        max_y = self.H - self.largeur_bande - self.r
+
+        if self.position[0] <= min_x or self.position[0] >= max_x:
             self.vitesse[0] = -self.vitesse[0]
-        if self.position[1] <= 2 * self.r or self.position[1] >= self.H - 2 * self.r:
+        if self.position[1] <= min_y or self.position[1] >= max_y:
             self.vitesse[1] = -self.vitesse[1]
 
         self.position += self.vitesse * dt
@@ -74,12 +78,17 @@ class Simulation:
 
         dt = 1
 
-        if self.position[0] <= 2 * self.r or self.position[0] >= self.L - 3 * self.r:
+        min_x = self.largeur_bande + self.r
+        max_x = self.L - self.largeur_bande - self.r
+        min_y = self.largeur_bande + self.r
+        max_y = self.H - self.largeur_bande - self.r
+
+        if self.position[0] <= min_x or self.position[0] >= max_x:
             self.vitesse[0] = -self.vitesse[0]
-        if self.position[1] <= 2 * self.r or self.position[1] >= self.H - 2 * self.r:
+        if self.position[1] <= min_y or self.position[1] >= max_y:
             self.vitesse[1] = -self.vitesse[1]
 
-        self.position = [pos - vel * dt for pos, vel in zip(self.position, self.vitesse)]
+        self.position = self.position - self.vitesse * dt
         self.table_billard.coords(
             self.balle,
             self.position[0] - self.r,
@@ -96,10 +105,15 @@ class Simulation:
         position = self.position.copy()
         vitesse = self.vitesse.copy()
 
+        min_x = self.largeur_bande + self.r
+        max_x = self.L - self.largeur_bande - self.r
+        min_y = self.largeur_bande + self.r
+        max_y = self.H - self.largeur_bande - self.r
+
         while np.linalg.norm(vitesse) >= self.epsilon:
-            if position[0] <= 2 * self.r or position[0] >= self.L - 3 * self.r:
+            if position[0] <= min_x or position[0] >= max_x:
                 vitesse[0] = -vitesse[0]
-            if position[1] <= 2 * self.r or position[1] >= self.H - 2 * self.r:
+            if position[1] <= min_y or position[1] >= max_y:
                 vitesse[1] = -vitesse[1]
             position += vitesse
             vitesse *= self.friction
