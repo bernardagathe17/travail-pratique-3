@@ -1,8 +1,6 @@
 import tkinter as tk
 import numpy as np
 
-
-
 x_vel = 5
 y_vel = 5
 
@@ -29,27 +27,27 @@ def bouger_balle(x, y ,x_vel, y_vel):
 
 
 
-largeur = 600
-hauteur = 300
-rayon = 10
-largeur_bande = 20
-position_initiale_balle = np.array([(largeur - largeur_bande*2)/4, hauteur/2])
-x,y = position_initiale_balle
+#largeur = donnees["largeur"]
+#hauteur = donnees["hauteur"]
+#rayon = donnees["Rayon des balles"]
+#largeur_bande = donnees["largeur_bande"]
+#position_initiale_balle = np.array([(largeur - largeur_bande*2)/4, hauteur/2])
+#x,y = position_initiale_balle
 
-fenetre = tk.Tk()
-fenetre.title("Partie de billard")
+#fenetre = tk.Tk()
+#fenetre.title("Partie de billard")
 
-fond = tk.Canvas(fenetre, bg="green",height=hauteur, width=largeur)
-fond.grid(row=0, column=0)
-bande = fond.create_rectangle(largeur_bande, largeur_bande, largeur - largeur_bande, hauteur - largeur_bande, outline="black", width=0.5)
-balle = fond.create_oval(x - rayon, y - rayon, x + rayon, y + rayon, fill="white")
+#fond = tk.Canvas(fenetre, bg="green",height=hauteur, width=largeur)
+#fond.grid(row=0, column=0)
+#bande = fond.create_rectangle(largeur_bande, largeur_bande, largeur - largeur_bande, hauteur - largeur_bande, outline="black", width=0.5)
+#balle = fond.create_oval(x - rayon, y - rayon, x + rayon, y + rayon, fill="white")
 
-tk.Label(fenetre, text="Vitesse intiale de la balle:").pack()
-vitesse_intitale = tk.Entry(fenetre)
-vitesse_intitale.pack(side= tk.BOTTOM)
-bouger_balle(x, y, x_vel, y_vel)
+#tk.Label(fenetre, text="Vitesse intiale de la balle:").pack()
+#vitesse_intitale = tk.Entry(fenetre)
+#vitesse_intitale.pack(side= tk.BOTTOM)
+#bouger_balle(x, y, x_vel, y_vel)
 
 
-fond.pack()
-fenetre.mainloop()
+#fond.pack()
+#fenetre.mainloop()
 

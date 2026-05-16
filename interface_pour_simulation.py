@@ -1,15 +1,63 @@
 import tkinter as tk
+<<<<<<< HEAD
 from tkinter import messagebox
+=======
+from tkinter import filedialog, messagebox
+>>>>>>> origin/main
 import numpy as np
+import json
 from simulation import Simulation
 
 
+<<<<<<< HEAD
 class Interface_Billard:
     def __init__(self):
         self.L = 600
         self.H = 300
         self.r = 10
         self.i = 0
+=======
+class ConfigError(Exception):
+    pass
+
+
+class ConfigFileNotFoundError(ConfigError):
+    pass
+
+
+class ConfigParseError(ConfigError):
+    pass
+
+
+class MissingConfigFieldError(ConfigError):
+    pass
+
+
+class InvalidConfigValueError(ConfigError):
+    pass
+
+
+class Interface_Billard():
+    def __init__(self):
+        self.fichier = tk.filedialog.askopenfilename(title="Sélectionner un fichier de configuration", filetypes=[("JSON files", "*.json")])
+        if not self.fichier:
+            raise ConfigFileNotFoundError("Aucun fichier de configuration sélectionné.")
+
+        self.config = self.load_config(self.fichier)
+        self.L = self.config["largeur"]
+        self.H = self.config["hauteur"]
+        self.r = self.config["Rayon des balles"]
+        self.largeur_bande = self.config["largeur_bande"]
+        min_x = self.largeur_bande + self.r
+        self.p_i = np.array([
+            min_x + (self.L - 2 * min_x) / 4,
+            self.H / 2,
+        ], dtype=float)
+        self.friction = self.config["coefficient de friction"]
+        self.epsilon = self.config["epsilon"]
+
+        self.simulation = None
+>>>>>>> origin/main
 
         self.p_i = np.array([(self.L - self.r*2)/4, self.H/2], dtype=float)
         
@@ -18,7 +66,7 @@ class Interface_Billard:
 
         self.table_billard = tk.Canvas(self.fenetre, bg="green", height=self.H, width=self.L)
         self.table_billard.grid(row=0, column=0)
-        self.bande = self.table_billard.create_rectangle(self.r, self.r, self.L - self.r, self.H - self.r, outline="black", width=1)
+        self.bande = self.table_billard.create_rectangle(self.largeur_bande, self.largeur_bande, self.L - self.largeur_bande, self.H - self.largeur_bande, outline="black", width=1)
         self.balle = self.table_billard.create_oval(self.p_i[0] - self.r, self.p_i[1] - self.r, self.p_i[0] + self.r, self.p_i[1] + self.r, fill="white")
 
         tk.Label(self.fenetre, text="Vitesse initiale de la balle:").grid(row=1, column=0)
@@ -44,7 +92,65 @@ class Interface_Billard:
 
 
 
+<<<<<<< HEAD
     def creer_etat_initial(self):
+=======
+    def load_config(self, path):
+        try:
+            with open(path, 'r', encoding='utf-8') as fichier:
+                config = json.load(fichier)
+        except FileNotFoundError as exc:
+            raise ConfigFileNotFoundError(f"Fichier de configuration introuvable : {path}") from exc
+        except json.JSONDecodeError as exc:
+            raise ConfigParseError(f"Fichier JSON mal formé : {exc.msg} (ligne {exc.lineno}, colonne {exc.colno})") from exc
+
+        self.validate_config(config)
+        return config
+
+    def validate_config(self, config):
+        required_fields = [
+            "largeur",
+            "hauteur",
+            "Rayon des balles",
+            "largeur_bande",
+            "coefficient de friction",
+            "epsilon",
+        ]
+        for field in required_fields:
+            if field not in config:
+                raise MissingConfigFieldError(f"Champ manquant dans le fichier de configuration : {field}")
+
+        largeur = config["largeur"]
+        hauteur = config["hauteur"]
+        rayon = config["Rayon des balles"]
+        largeur_bande = config["largeur_bande"]
+        friction = config["coefficient de friction"]
+        epsilon = config["epsilon"]
+
+        if not isinstance(largeur, (int, float)) or largeur <= 0:
+            raise InvalidConfigValueError("'largeur' doit être un nombre strictement positif.")
+        if not isinstance(hauteur, (int, float)) or hauteur <= 0:
+            raise InvalidConfigValueError("'hauteur' doit être un nombre strictement positif.")
+        if not isinstance(rayon, (int, float)) or rayon <= 0:
+            raise InvalidConfigValueError("'Rayon des balles' doit être un nombre strictement positif.")
+        if not isinstance(largeur_bande, (int, float)) or largeur_bande < 0:
+            raise InvalidConfigValueError("'largeur_bande' doit être un nombre positif ou nul.")
+        if largeur_bande * 2 >= min(largeur, hauteur):
+            raise InvalidConfigValueError("'largeur_bande' est trop grande pour les dimensions de la table.")
+        if largeur_bande + rayon >= largeur / 2:
+            raise InvalidConfigValueError("'largeur_bande' et 'Rayon des balles' ne laissent pas assez de place horizontalement.")
+        if largeur_bande + rayon >= hauteur / 2:
+            raise InvalidConfigValueError("'largeur_bande' et 'Rayon des balles' ne laissent pas assez de place verticalement.")
+        if not isinstance(friction, (int, float)) or not (0 <= friction <= 1):
+            raise InvalidConfigValueError("'coefficient de friction' doit être un nombre entre 0 et 1.")
+        if not isinstance(epsilon, (int, float)) or epsilon <= 0:
+            raise InvalidConfigValueError("'epsilon' doit être un nombre strictement positif.")
+
+    def lancer(self):
+        #self.bande = self.table_billard.create_rectangle(self.r, self.r, self.L - self.r, self.H - self.r, outline="black", width=1)
+        #self.balle = self.table_billard.create_oval(self.p_i[0] - self.r, self.p_i[1] - self.r, self.p_i[0] + self.r, self.p_i[1] + self.r, fill="white")
+        from simulation import Simulation
+>>>>>>> origin/main
         try:
             vitesse_initiale = float(self.v_i.get())
             angle = -1 *float(self.angle.get())
@@ -77,6 +183,7 @@ class Interface_Billard:
 
         self.simulation = Simulation(
                 self.fenetre,
+<<<<<<< HEAD
                 self.table_billard,
                 self.H,
                 self.L,
@@ -84,6 +191,10 @@ class Interface_Billard:
                 self.r,
                 etat_initial,
                 coefficient_friction
+=======
+                self.largeur_bande,
+                self.config,
+>>>>>>> origin/main
             )
         
         self.p_i = self.simulation.avancer_balle()
@@ -175,7 +286,16 @@ class Interface_Billard:
     def run(self):
         self.fenetre.mainloop()
 
+
 if __name__ == '__main__':
-    app = Interface_Billard()
-    app.run()
+    try:
+        app = Interface_Billard()
+        app.run()
+    except ConfigError as exc:
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Erreur de configuration", str(exc))
+        root.destroy()
+        raise SystemExit(1)
+
 
